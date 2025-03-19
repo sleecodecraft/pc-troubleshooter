@@ -1,3 +1,4 @@
+
 const problemSelect = document.getElementById('problem-select');
 const solutionDiv = document.getElementById('solution');
 const problemTitle = document.getElementById('problem-title');
@@ -54,4 +55,5 @@ nextBtn.addEventListener('click', function() {
         currentStep.textContent = currentProblem.steps[stepIndex];
         nextBtn.style.display = stepIndex < currentProblem.steps.length - 1 ? 'inline' : 'none';
     }
+
 });
