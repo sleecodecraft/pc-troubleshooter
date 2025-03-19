@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+}
+
+select {
+    padding: 5px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+#solution {
+    margin-top: 20px;
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ccc;
+    display: none; /* Hidden until a problem is selected */
+}
+
+#solution {
+    margin-top: 20px;
+    text-align: center; /* Center the content */
+    padding: 20px;
+    border: 1px solid #ccc;
+    display: none;
+}
+
+#next-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50; /* Green button */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#next-btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
