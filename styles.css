@@ -1,47 +1,104 @@
+/* Reset defaults for consistency */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: 20px auto;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7fa; /* Light gray-blue background */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header styling */
+header {
+    background-color: #1a2b4c; /* Dark blue, techy vibe */
+    color: white;
     padding: 20px;
     text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-    color: #333;
+header h1 {
+    font-size: 2em;
+    font-weight: 700;
 }
 
-select {
-    padding: 5px;
-    font-size: 16px;
-    margin-top: 10px;
-}
-
-#solution {
-    margin-top: 20px;
-    text-align: left;
-    padding: 10px;
-    border: 1px solid #ccc;
-    display: none; /* Hidden until a problem is selected */
-}
-
-#solution {
-    margin-top: 20px;
-    text-align: center; /* Center the content */
+/* Container for content */
+.container {
+    max-width: 700px;
+    margin: 30px auto;
     padding: 20px;
-    border: 1px solid #ccc;
-    display: none;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Instruction text */
+p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+/* Dropdown styling */
+select {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: #4CAF50; /* Green accent */
+}
+
+/* Solution box */
+#solution {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #eef4ed; /* Subtle green-gray */
+    border-radius: 8px;
+    display: none;
+    text-align: left;
+}
+
+#problem-title {
+    font-size: 1.5em;
+    color: #1a2b4c; /* Matches header */
+    margin-bottom: 10px;
+}
+
+#current-step {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Next button */
 #next-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4CAF50; /* Green button */
+    padding: 10px 25px;
+    font-size: 1em;
+    background-color: #4CAF50; /* Tech green */
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 #next-btn:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #45a049;
+    transform: translateY(-2px); /* Subtle lift effect */
+}
+
+#next-btn:active {
+    transform: translateY(0);
 }
