@@ -8,6 +8,7 @@ const stepIcon = document.getElementById('step-icon');
 const nextBtn = document.getElementById('next-btn');
 const prevBtn = document.getElementById('prev-btn');
 const resetBtn = document.getElementById('reset-btn');
+const watchVideoBtn = document.getElementById('watch-video-btn');
 const stepProgress = document.getElementById('step-progress');
 const successMessage = document.getElementById('success-message');
 const dropdown = document.getElementById('dropdown');
@@ -16,6 +17,10 @@ const customProblemDiv = document.getElementById('custom-problem');
 const customInput = document.getElementById('custom-input');
 const searchBtn = document.getElementById('search-btn');
 const customResetBtn = document.getElementById('custom-reset-btn');
+const searchResultsDiv = document.getElementById('search-results');
+const searchResultsTitle = document.getElementById('search-results-title');
+const searchResultsList = document.getElementById('search-results-list');
+const closeSearchBtn = document.getElementById('close-search-btn');
 
 const solutions = {
     'no-display': {
@@ -76,6 +81,31 @@ const solutions = {
     }
 };
 
+// Updated YouTube video links for each problem
+const placeholderVideos = {
+    'no-display': [
+        { title: 'How to Fix Computer No Display or No Signal on Monitor', url: 'https://youtu.be/QCuZRBfrgjI?si=BiH1hh1I7nv7oTUb' }
+    ],
+    'slow-pc': [
+        { title: 'Fix Your Slow Computer', url: 'https://youtu.be/j2RW8Rt1nP4?si=ognomEX6pM3YnYE_' }
+    ],
+    'no-internet': [
+        { title: 'Fix Internet Issue', url: 'https://youtube.com/shorts/IOB_TMJ6sOU?si=6KADPTEmp1B84I8U' }
+    ],
+    'pc-wont-boot': [
+        { title: 'How to Fix a PC That Doesn\'t Boot', url: 'https://youtu.be/LfNW9cCBD84?si=STCl8aYXbK6VAMCs' }
+    ],
+    'blue-screen': [
+        { title: 'BSOD | Troubleshoot & Fix *ANY* Windows Blue Screen of Death', url: 'https://youtu.be/cp5qbrKrDME?si=pqJgl4PZNbVRsuJC' }
+    ],
+    'no-sound': [
+        { title: 'How to Fix No Sound on Windows 10', url: 'https://youtu.be/C125xxp0Ado?si=o5u1xQ1gCuut2Iud' }
+    ],
+    'overheating': [
+        { title: 'How to Fix Computer Overheat', url: 'https://youtu.be/xBlmfQ98pUg?si=t9hlqt_inHM589M_' }
+    ]
+};
+
 // Ensure "Other" option exists in the dropdown
 if (!problemOptions.querySelector('li[data-value="other"]')) {
     const otherOption = document.createElement('li');
@@ -86,6 +116,7 @@ if (!problemOptions.querySelector('li[data-value="other"]')) {
 
 let currentProblem = null;
 let stepIndex = 0;
+let currentProblemKey = null; // Store the data-value of the selected problem
 
 function updateDisplay() {
     // Hide custom problem input if not "Other"
@@ -93,10 +124,14 @@ function updateDisplay() {
         customProblemDiv.style.display = 'none';
     }
 
+    // Hide search results by default
+    searchResultsDiv.style.display = 'none';
+
     if (!currentProblem || currentProblem === 'other') {
         solutionDiv.style.display = 'none';
         solutionDiv.classList.remove('fade-in');
         resetBtn.style.display = 'none';
+        watchVideoBtn.style.display = 'none';
         successMessage.style.display = 'none';
         return;
     }
@@ -124,6 +159,7 @@ function updateDisplay() {
     prevBtn.style.display = stepIndex > 0 ? 'inline' : 'none';
     nextBtn.style.display = stepIndex < currentProblem.steps.length - 1 ? 'inline' : 'none';
     resetBtn.style.display = 'inline';
+    watchVideoBtn.style.display = stepIndex === currentProblem.steps.length - 1 ? 'inline' : 'none';
 
     // Show success message at the end
     successMessage.style.display = stepIndex === currentProblem.steps.length - 1 ? 'block' : 'none';
@@ -148,13 +184,16 @@ problemOptions.querySelectorAll('li').forEach(option => {
 
         if (selectedValue === 'other') {
             currentProblem = 'other';
+            currentProblemKey = 'other';
             customProblemDiv.style.display = 'block';
             customInput.value = '';
         } else if (selectedValue) {
             currentProblem = solutions[selectedValue];
+            currentProblemKey = selectedValue; // Store the data-value
             stepIndex = 0;
         } else {
             currentProblem = null;
+            currentProblemKey = null;
         }
 
         // Close the dropdown after selection
@@ -188,11 +227,56 @@ customInput.addEventListener('keypress', function(event) {
 customResetBtn.addEventListener('click', function() {
     selectedText.textContent = '-- Choose a Problem --';
     currentProblem = null;
+    currentProblemKey = null;
     stepIndex = 0;
-    customInput.value = ''; // Clear the input field
+    customInput.value = '';
     updateDisplay();
     problemOptions.classList.remove('closed');
     dropdown.classList.remove('open');
+});
+
+// Handle watch video button
+watchVideoBtn.addEventListener('click', function() {
+    if (currentProblem && currentProblemKey) {
+        // Update search results title
+        searchResultsTitle.textContent = `Video Tutorials for ${currentProblem.title}`;
+
+        // Clear previous results
+        searchResultsList.innerHTML = '';
+
+        // Populate with video links using the data-value key
+        const videos = placeholderVideos[currentProblemKey];
+        if (videos) {
+            videos.forEach(video => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = video.url;
+                a.textContent = video.title;
+                a.target = '_blank'; // Open links in a new tab
+                li.appendChild(a);
+                searchResultsList.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.textContent = 'No video tutorials available.';
+            searchResultsList.appendChild(li);
+        }
+
+        // Show the search results section
+        searchResultsDiv.style.display = 'block';
+
+        // Optionally hide the solution area to focus on the search results
+        solutionDiv.style.display = 'none';
+    }
+});
+
+// Handle close search results
+closeSearchBtn.addEventListener('click', function() {
+    searchResultsDiv.style.display = 'none';
+    // Show the solution area again
+    if (currentProblem && currentProblem !== 'other') {
+        solutionDiv.style.display = 'block';
+    }
 });
 
 nextBtn.addEventListener('click', function() {
@@ -216,6 +300,7 @@ prevBtn.addEventListener('click', function() {
 resetBtn.addEventListener('click', function() {
     selectedText.textContent = '-- Choose a Problem --';
     currentProblem = null;
+    currentProblemKey = null;
     stepIndex = 0;
     updateDisplay();
     problemOptions.classList.remove('closed');
