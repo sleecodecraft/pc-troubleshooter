@@ -15,16 +15,30 @@
     <div class="container">
         <p>Select a problem to troubleshoot step-by-step:</p>
         <div class="dropdown-wrapper">
-            <select id="problem-select">
-                <option value="">-- Choose a Problem --</option>
-                <option value="no-display">No Display on Monitor</option>
-                <option value="slow-pc">PC Running Slow</option>
-                <option value="no-internet">No Internet Connection</option>
-                <option value="pc-wont-boot">PC Won’t Boot</option>
-                <option value="blue-screen">Blue Screen of Death (BSOD)</option>
-                <option value="no-sound">No Sound Output</option>
-                <option value="overheating">Overheating Issues</option>
-            </select>
+            <div class="dropdown" id="dropdown">
+                <div class="dropdown-selected" id="problem-select">
+                    <span id="selected-text">-- Choose a Problem --</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <ul class="dropdown-options" id="problem-options">
+                    <li data-value="" class="default-option">-- Choose a Problem --</li>
+                    <li data-value="no-display">No Display on Monitor</li>
+                    <li data-value="slow-pc">PC Running Slow</li>
+                    <li data-value="no-internet">No Internet Connection</li>
+                    <li data-value="pc-wont-boot">PC Won’t Boot</li>
+                    <li data-value="blue-screen">Blue Screen of Death (BSOD)</li>
+                    <li data-value="no-sound">No Sound Output</li>
+                    <li data-value="overheating">Overheating Issues</li>
+                    <li data-value="other">Other</li>
+                </ul>
+            </div>
+        </div>
+        <div class="custom-problem" id="custom-problem">
+            <input type="text" id="custom-input" placeholder="Enter your PC problem...">
+            <div class="custom-problem-buttons">
+                <button id="search-btn">Search</button>
+                <button id="custom-reset-btn">Reset</button>
+            </div>
         </div>
         <div id="solution" class="solution-card">
             <h2 id="problem-title"></h2>
@@ -46,7 +60,7 @@
         </div>
     </div>
     <footer>
-        <p>&copy; 2025 Sarah Lee. All rights reserved.</p>
+        <p>© 2025 Sarah Lee. All rights reserved.</p>
     </footer>
     <script src="script.js"></script>
 </body>

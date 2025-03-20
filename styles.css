@@ -18,6 +18,7 @@ body {
     align-items: center;
     min-height: 100vh;
     position: relative;
+    padding-bottom: 60px;
 }
 
 /* Dark overlay for readability */
@@ -33,7 +34,7 @@ body::before {
 }
 
 /* Ensure content is above the overlay */
-header, .container {
+header, .container, footer {
     position: relative;
     z-index: 1;
 }
@@ -45,11 +46,17 @@ header {
     padding: 20px;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+}
+
+header:hover {
+    transform: scale(1.02);
 }
 
 h1 {
     color: #00d4ff;
-    font-size: 2em;
+    font-size: 2.2em;
+    font-weight: 700;
 }
 
 h1 i {
@@ -72,9 +79,10 @@ h1 i {
 p {
     color: #b0b0b0;
     margin-bottom: 20px;
+    font-size: 1.1em;
 }
 
-/* Dropdown wrapper for custom arrow */
+/* Dropdown wrapper */
 .dropdown-wrapper {
     position: relative;
     width: 100%;
@@ -82,85 +90,250 @@ p {
     margin: 0 auto;
 }
 
-/* Dropdown styling */
-select#problem-select {
+/* Custom dropdown */
+.dropdown {
+    position: relative;
+}
+
+/* Selected option */
+.dropdown-selected {
     width: 100%;
-    padding: 12px 40px 12px 15px;
+    padding: 12px 15px;
     font-size: 16px;
     font-weight: 500;
     background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
     color: #e0e0e0;
-    border: 2px solid #00d4ff;
+    border: 2px solid transparent;
+    border-image: linear-gradient(45deg, #00d4ff, #ff007a) 1;
     border-radius: 8px;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
 }
 
-/* Custom arrow */
-.dropdown-wrapper::after {
-    content: '\f078';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
+/* Chevron icon */
+.dropdown-selected i {
     color: #ff007a;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
+    transition: transform 0.3s ease;
 }
 
-/* Hover and focus effects */
-select#problem-select:hover {
-    border-color: #ff007a;
-    box-shadow: 0 0 15px rgba(255, 0, 122, 0.5);
+/* Rotate chevron when dropdown is open */
+.dropdown.open .dropdown-selected i {
+    transform: rotate(180deg);
+}
+
+/* Options list */
+.dropdown-options {
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+    border: 2px solid transparent;
+    border-image: linear-gradient(45deg, #00d4ff, #ff007a) 1;
+    border-radius: 8px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Show options when open */
+.dropdown.open .dropdown-options {
+    max-height: 400px;
+    opacity: 1;
+}
+
+/* Hide default option when open */
+.dropdown.open .dropdown-options .default-option {
+    display: none;
+}
+
+/* Ensure all non-default options are visible */
+.dropdown.open .dropdown-options li:not(.default-option) {
+    display: block;
+}
+
+/* Force close the dropdown */
+.dropdown-options.closed {
+    max-height: 0 !important;
+    opacity: 0 !important;
+}
+
+/* Option items */
+.dropdown-options li {
+    padding: 12px 15px;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.dropdown-options li:hover {
+    background-color: #ff007a;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* Hover and focus effects for selected */
+.dropdown-selected:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 122, 0.7);
     transform: scale(1.02);
 }
 
-select#problem-select:focus {
-    border-color: #ff007a;
-    box-shadow: 0 0 15px rgba(255, 0, 122, 0.5);
-    outline: none;
+/* Custom problem input section */
+.custom-problem {
+    display: none;
+    margin-top: 15px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-select#problem-select option {
-    background-color: #1a1a2e;
-    color: #e0e0e0;
+.custom-problem input {
+    width: 100%;
+    max-width: 300px;
     padding: 10px;
+    font-size: 16px;
+    background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+    color: #e0e0e0;
+    border: 2px solid transparent;
+    border-image: linear-gradient(45deg, #00d4ff, #ff007a) 1;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.custom-problem input:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 0, 122, 0.7);
+}
+
+/* Custom problem buttons container */
+.custom-problem-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.custom-problem button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    animation: pulse 2s infinite;
+}
+
+.custom-problem #search-btn {
+    background-color: #ff007a;
+    color: #fff;
+}
+
+.custom-problem #search-btn:hover {
+    background-color: #d6005e;
+    transform: translateY(-2px);
+}
+
+.custom-problem #custom-reset-btn {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.custom-problem #custom-reset-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
 }
 
 /* Solution card */
 .solution-card {
     margin-top: 20px;
     padding: 20px;
-    background-color: rgba(15, 52, 96, 0.9);
+    background: linear-gradient(135deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
+    border: 2px solid transparent;
+    border-image: linear-gradient(45deg, #00d4ff, #ff007a) 1;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
     text-align: left;
     display: none;
-    animation: fadeIn 0.5s ease-in-out;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+/* Slide-in animation for solution card */
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Fade-in animation */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* Bounce animation for buttons */
-@keyframes bounce {
+/* Slide and fade animations for step content */
+.step-container i, .step-container p {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.step-container.slide-out i, .step-container.slide-out p {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.step-container.slide-in i, .step-container.slide-in p {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Scale-up animation for icon */
+@keyframes scaleUp {
     0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    50% { transform: scale(1.2); }
     100% { transform: scale(1); }
+}
+
+.step-container i.scale-up {
+    animation: scaleUp 0.5s ease-in-out;
+}
+
+/* Pulse animation for progress */
+@keyframes progressPulse {
+    0% { text-shadow: 0 0 5px rgba(0, 212, 255, 0.5); }
+    50% { text-shadow: 0 0 15px rgba(0, 212, 255, 0.8); }
+    100% { text-shadow: 0 0 5px rgba(0, 212, 255, 0.5); }
+}
+
+.progress.pulse {
+    animation: progressPulse 1s ease-in-out;
+}
+
+/* Success message animation */
+@keyframes successGlow {
+    0% { transform: scale(0.8); text-shadow: 0 0 5px #4CAF50; }
+    50% { transform: scale(1.1); text-shadow: 0 0 15px #4CAF50; }
+    100% { transform: scale(1); text-shadow: 0 0 5px #4CAF50; }
+}
+
+/* Pulse animation for buttons and step container */
+@keyframes pulse {
+    0% { box-shadow: 0 0 5px rgba(255, 0, 122, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(255, 0, 122, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(255, 0, 122, 0.5); }
 }
 
 /* Solution title */
 .solution-card h2 {
     color: #00d4ff;
-    font-size: 1.5em;
+    font-size: 1.6em;
+    font-weight: 700;
     margin-bottom: 10px;
 }
 
@@ -169,6 +342,11 @@ select#problem-select option {
     display: flex;
     align-items: flex-start;
     margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    border-image: linear-gradient(45deg, #00d4ff, #ff007a) 1;
+    animation: pulse 2s infinite;
 }
 
 .step-container i {
@@ -181,6 +359,10 @@ select#problem-select option {
 .step-container p {
     color: #e0e0e0;
     margin: 0;
+    font-size: 1.1em;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 122, 0.1));
 }
 
 /* Progress indicator */
@@ -188,6 +370,7 @@ select#problem-select option {
     text-align: center;
     margin-bottom: 15px;
     color: #b0b0b0;
+    font-size: 1.1em;
 }
 
 /* Success message */
@@ -197,7 +380,7 @@ select#problem-select option {
     font-size: 1.2em;
     margin-top: 15px;
     display: none;
-    animation: fadeIn 0.5s ease-in-out;
+    animation: successGlow 0.8s ease-in-out;
 }
 
 /* Button group */
@@ -216,6 +399,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    animation: pulse 2s infinite;
 }
 
 #next-btn {
@@ -250,14 +434,16 @@ button {
 
 /* Footer */
 footer {
-    background-color: rgba(15, 52, 96, 0.9); /* Match header */
+    background-color: rgba(15, 52, 96, 0.9);
     width: 100%;
     padding: 15px;
     text-align: center;
     color: #b0b0b0;
     font-size: 0.9em;
-    position: relative;
-    z-index: 1; /* Above the background overlay */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
 }
 

@@ -1,4 +1,6 @@
 const problemSelect = document.getElementById('problem-select');
+const selectedText = document.getElementById('selected-text');
+const problemOptions = document.getElementById('problem-options');
 const solutionDiv = document.getElementById('solution');
 const problemTitle = document.getElementById('problem-title');
 const currentStep = document.getElementById('current-step');
@@ -8,6 +10,12 @@ const prevBtn = document.getElementById('prev-btn');
 const resetBtn = document.getElementById('reset-btn');
 const stepProgress = document.getElementById('step-progress');
 const successMessage = document.getElementById('success-message');
+const dropdown = document.getElementById('dropdown');
+const stepContainer = document.querySelector('.step-container');
+const customProblemDiv = document.getElementById('custom-problem');
+const customInput = document.getElementById('custom-input');
+const searchBtn = document.getElementById('search-btn');
+const customResetBtn = document.getElementById('custom-reset-btn');
 
 const solutions = {
     'no-display': {
@@ -68,25 +76,49 @@ const solutions = {
     }
 };
 
+// Ensure "Other" option exists in the dropdown
+if (!problemOptions.querySelector('li[data-value="other"]')) {
+    const otherOption = document.createElement('li');
+    otherOption.setAttribute('data-value', 'other');
+    otherOption.textContent = 'Other';
+    problemOptions.appendChild(otherOption);
+}
+
 let currentProblem = null;
 let stepIndex = 0;
 
 function updateDisplay() {
-    if (!currentProblem) {
+    // Hide custom problem input if not "Other"
+    if (currentProblem !== 'other') {
+        customProblemDiv.style.display = 'none';
+    }
+
+    if (!currentProblem || currentProblem === 'other') {
         solutionDiv.style.display = 'none';
         solutionDiv.classList.remove('fade-in');
         resetBtn.style.display = 'none';
+        successMessage.style.display = 'none';
         return;
     }
 
     solutionDiv.style.display = 'block';
     solutionDiv.classList.add('fade-in');
     problemTitle.textContent = currentProblem.title;
-    currentStep.textContent = currentProblem.steps[stepIndex].text;
-    stepIcon.className = `fas ${currentProblem.steps[stepIndex].icon}`;
 
-    // Update progress
+    // Animate step content
+    stepContainer.classList.remove('slide-in');
+    stepContainer.classList.add('slide-out');
+    setTimeout(() => {
+        currentStep.textContent = currentProblem.steps[stepIndex].text;
+        stepIcon.className = `fas ${currentProblem.steps[stepIndex].icon}`;
+        stepContainer.classList.remove('slide-out');
+        stepContainer.classList.add('slide-in');
+        stepIcon.classList.add('scale-up');
+    }, 300);
+
+    // Update progress with pulse effect
     stepProgress.textContent = `Step ${stepIndex + 1} of ${currentProblem.steps.length}`;
+    stepProgress.parentElement.classList.add('pulse');
 
     // Show/hide buttons
     prevBtn.style.display = stepIndex > 0 ? 'inline' : 'none';
@@ -97,16 +129,70 @@ function updateDisplay() {
     successMessage.style.display = stepIndex === currentProblem.steps.length - 1 ? 'block' : 'none';
 }
 
-problemSelect.addEventListener('change', function() {
-    const selectedProblem = problemSelect.value;
-    if (selectedProblem) {
-        currentProblem = solutions[selectedProblem];
-        stepIndex = 0;
-        updateDisplay();
-    } else {
-        currentProblem = null;
-        updateDisplay();
+// Handle dropdown hover
+dropdown.addEventListener('mouseover', function() {
+    dropdown.classList.add('open');
+});
+
+dropdown.addEventListener('mouseout', function() {
+    if (!problemOptions.classList.contains('closed')) {
+        dropdown.classList.remove('open');
     }
+});
+
+// Handle option selection
+problemOptions.querySelectorAll('li').forEach(option => {
+    option.addEventListener('click', function() {
+        const selectedValue = this.getAttribute('data-value');
+        selectedText.textContent = this.textContent;
+
+        if (selectedValue === 'other') {
+            currentProblem = 'other';
+            customProblemDiv.style.display = 'block';
+            customInput.value = '';
+        } else if (selectedValue) {
+            currentProblem = solutions[selectedValue];
+            stepIndex = 0;
+        } else {
+            currentProblem = null;
+        }
+
+        // Close the dropdown after selection
+        problemOptions.classList.add('closed');
+        dropdown.classList.remove('open');
+
+        // Update display after a slight delay to allow closing animation
+        setTimeout(updateDisplay, 300);
+    });
+});
+
+// Handle custom problem search
+searchBtn.addEventListener('click', function() {
+    const query = customInput.value.trim();
+    if (query) {
+        const searchQuery = `${query} PC troubleshooting solution`;
+        const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+        window.open(googleSearchUrl, '_blank');
+    }
+});
+
+// Allow Enter key to trigger search
+customInput.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        searchBtn.click();
+    }
+});
+
+// Handle custom problem reset
+customResetBtn.addEventListener('click', function() {
+    selectedText.textContent = '-- Choose a Problem --';
+    currentProblem = null;
+    stepIndex = 0;
+    customInput.value = ''; // Clear the input field
+    updateDisplay();
+    problemOptions.classList.remove('closed');
+    dropdown.classList.remove('open');
 });
 
 nextBtn.addEventListener('click', function() {
@@ -128,8 +214,10 @@ prevBtn.addEventListener('click', function() {
 });
 
 resetBtn.addEventListener('click', function() {
-    problemSelect.value = '';
+    selectedText.textContent = '-- Choose a Problem --';
     currentProblem = null;
     stepIndex = 0;
     updateDisplay();
+    problemOptions.classList.remove('closed');
+    dropdown.classList.remove('open');
 });
