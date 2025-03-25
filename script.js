@@ -20,7 +20,7 @@ const customResetBtn = document.getElementById('custom-reset-btn');
 const searchResultsDiv = document.getElementById('search-results');
 const searchResultsTitle = document.getElementById('search-results-title');
 const searchResultsList = document.getElementById('search-results-list');
-const closeSearchBtn = document.getElementById('close-search-btn');
+const resetSearchBtn = document.getElementById('reset-search-btn');
 
 const solutions = {
     'no-display': {
@@ -90,7 +90,7 @@ const placeholderVideos = {
         { title: 'Fix Your Slow Computer', url: 'https://youtu.be/j2RW8Rt1nP4?si=ognomEX6pM3YnYE_' }
     ],
     'no-internet': [
-        { title: 'Fix Internet Issue', url: 'https://youtube.com/shorts/IOB_TMJ6sOU?si=6KADPTEmp1B84I8U' }
+        { title: 'Fix Internet Issue', url: 'https://youtu.be/DqeUJpNkGgY?si=R3phGfL9iC8vu6yf' }
     ],
     'pc-wont-boot': [
         { title: 'How to Fix a PC That Doesn\'t Boot', url: 'https://youtu.be/LfNW9cCBD84?si=STCl8aYXbK6VAMCs' }
@@ -105,6 +105,13 @@ const placeholderVideos = {
         { title: 'How to Fix Computer Overheat', url: 'https://youtu.be/xBlmfQ98pUg?si=t9hlqt_inHM589M_' }
     ]
 };
+
+// Function to extract YouTube video ID from URL
+function getYouTubeVideoId(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
 
 // Ensure "Other" option exists in the dropdown
 if (!problemOptions.querySelector('li[data-value="other"]')) {
@@ -210,8 +217,25 @@ searchBtn.addEventListener('click', function() {
     const query = customInput.value.trim();
     if (query) {
         const searchQuery = `${query} PC troubleshooting solution`;
-        const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
-        window.open(googleSearchUrl, '_blank');
+        // Update search results title
+        searchResultsTitle.textContent = `Search Results for "${query}"`;
+
+        // Clear previous results
+        searchResultsList.innerHTML = '';
+
+        // Create an iframe to embed Google search results
+        const li = document.createElement('li');
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&igu=1`;
+        iframe.className = 'google-search-iframe';
+        iframe.style.width = '100%';
+        iframe.style.height = '500px'; // Adjust height as needed
+        iframe.style.border = 'none';
+        li.appendChild(iframe);
+        searchResultsList.appendChild(li);
+
+        // Show the search results section
+        searchResultsDiv.style.display = 'block';
     }
 });
 
@@ -244,16 +268,37 @@ watchVideoBtn.addEventListener('click', function() {
         // Clear previous results
         searchResultsList.innerHTML = '';
 
-        // Populate with video links using the data-value key
+        // Populate with embedded videos using the data-value key
         const videos = placeholderVideos[currentProblemKey];
         if (videos) {
             videos.forEach(video => {
                 const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = video.url;
-                a.textContent = video.title;
-                a.target = '_blank'; // Open links in a new tab
-                li.appendChild(a);
+                const videoId = getYouTubeVideoId(video.url);
+                if (videoId) {
+                    // Create a container for the video title and iframe
+                    const videoContainer = document.createElement('div');
+                    videoContainer.className = 'video-container';
+
+                    // Add the video title
+                    const title = document.createElement('p');
+                    title.textContent = video.title;
+                    title.className = 'video-title';
+                    videoContainer.appendChild(title);
+
+                    // Create the iframe for the embedded video
+                    const iframe = document.createElement('iframe');
+                    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                    iframe.allowFullscreen = true;
+                    iframe.className = 'youtube-video';
+                    videoContainer.appendChild(iframe);
+
+                    li.appendChild(videoContainer);
+                } else {
+                    const errorText = document.createElement('p');
+                    errorText.textContent = `Unable to load video: ${video.title}`;
+                    li.appendChild(errorText);
+                }
                 searchResultsList.appendChild(li);
             });
         } else {
@@ -270,13 +315,15 @@ watchVideoBtn.addEventListener('click', function() {
     }
 });
 
-// Handle close search results
-closeSearchBtn.addEventListener('click', function() {
-    searchResultsDiv.style.display = 'none';
-    // Show the solution area again
-    if (currentProblem && currentProblem !== 'other') {
-        solutionDiv.style.display = 'block';
-    }
+// Handle reset from search results
+resetSearchBtn.addEventListener('click', function() {
+    selectedText.textContent = '-- Choose a Problem --';
+    currentProblem = null;
+    currentProblemKey = null;
+    stepIndex = 0;
+    updateDisplay();
+    problemOptions.classList.remove('closed');
+    dropdown.classList.remove('open');
 });
 
 nextBtn.addEventListener('click', function() {
