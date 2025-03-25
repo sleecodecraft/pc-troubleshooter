@@ -1,3 +1,4 @@
+
 # PC Troubleshooting Simulator
 
 A web-based tool to help users troubleshoot common PC issues step-by-step. Built with HTML, CSS, and JavaScript, featuring a modern tech design with a circuit background and interactive elements.
@@ -12,4 +13,4 @@ A web-based tool to help users troubleshoot common PC issues step-by-step. Built
 [View the live demo on GitHub Pages](https://sleecodecraft.github.io/pc-troubleshooter)
 
 ## Copyright
-© 2025 Sarah Lee. All rights reserved.
+© 2025 Sarah Lee. All rights reserved.# pc-troubleshooter
